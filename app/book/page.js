@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
 import styles from './book.module.css'
@@ -265,9 +266,14 @@ export default function BookPage() {
             <h1 className={styles.title}>จองโต๊ะโรงอาหาร</h1>
             <p className={styles.sub}>เลือกวัน เวลา แล้วแตะโต๊ะที่ว่าง</p>
           </div>
-          <button className={styles.ghost} onClick={() => supabase.auth.signOut()}>
-            ออกจากระบบ
-          </button>
+          <div className={styles.nav}>
+            <Link href="/order" className={styles.ghost}>
+              สั่งอาหาร
+            </Link>
+            <button className={styles.ghost} onClick={() => supabase.auth.signOut()}>
+              ออกจากระบบ
+            </button>
+          </div>
         </header>
 
         {notice && (
