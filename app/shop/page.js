@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
+import TelegramLink from '../../components/TelegramLink'
 import styles from '../order/order.module.css'
 
 const COLUMNS = [
@@ -351,6 +352,8 @@ export default function ShopPage() {
 
         {shop && (
           <>
+            <TelegramLink userId={user.id} audience="shop" />
+
             <section aria-labelledby="h-shop">
               <h2 id="h-shop" className={styles.h2}>{shop.name}</h2>
               <div className={styles.toggleRow}>

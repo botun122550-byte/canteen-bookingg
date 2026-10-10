@@ -1,0 +1,115 @@
+.card {
+  margin: 16px 0;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-left: 8px solid var(--free);
+  border-radius: 14px;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.text {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.ok {
+  margin: 4px 0 10px;
+  color: var(--free);
+  font-weight: 600;
+}
+
+.steps {
+  margin: 4px 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+
+.link {
+  color: var(--mine);
+  font-weight: 600;
+}
+
+.code {
+  margin: 8px 0;
+  padding: 12px;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  background: var(--free-soft);
+  border: 2px dashed var(--free);
+  border-radius: 12px;
+  user-select: all;
+}
+
+.primary,
+.ghost {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.primary {
+  background: var(--free);
+  color: #fff;
+  border: 0;
+}
+
+.ghost {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  font-weight: 500;
+}
+
+.primary:disabled,
+.ghost:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.primary:focus-visible,
+.ghost:focus-visible,
+.link:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--taken-soft);
+  color: var(--taken);
+  font-size: 0.9rem;
+}
+
+.primaryLink {
+  display: inline-block;
+  padding: 12px 18px;
+  background: var(--free);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primaryLink:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+.cmd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 6px;
+  word-break: break-all;
+}

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
+import TelegramLink from '../../components/TelegramLink'
 import styles from './order.module.css'
 
 const STATUS = {
@@ -323,6 +324,8 @@ export default function OrderPage() {
             {notice.text}
           </p>
         )}
+
+        <TelegramLink userId={user.id} audience="student" />
 
         <section aria-labelledby="h-shop">
           <h2 id="h-shop" className={styles.h2}>เลือกร้าน</h2>
