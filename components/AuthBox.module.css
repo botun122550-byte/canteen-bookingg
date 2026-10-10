@@ -1,0 +1,96 @@
+.wrap {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sub {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.input:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 1px;
+}
+
+.primary,
+.secondary {
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 2px solid var(--free);
+}
+
+.primary {
+  margin-top: 12px;
+  background: var(--free);
+  color: #fff;
+}
+
+.secondary {
+  background: transparent;
+  color: var(--free);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+.msg {
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.error {
+  background: var(--taken-soft);
+  color: var(--taken);
+}
+
+.ok {
+  background: var(--free-soft);
+  color: var(--free);
+}
