@@ -99,7 +99,7 @@ export default function ShopPage() {
     if (!shopId) return
     const { data, error } = await supabase
       .from('orders')
-      .select('id, status, total_price, created_at, note, tables(name), order_items(name, quantity)')
+      .select('id, status, total_price, created_at, note, tables(name), order_items(name, quantity, options)')
       .eq('shop_id', shopId)
       .in('status', ['new', 'cooking', 'ready'])
       .order('created_at')
@@ -114,7 +114,7 @@ export default function ShopPage() {
     if (!shopId) return
     const { data, error } = await supabase
       .from('menu_items')
-      .select('id, name, price, is_available')
+      .select('id, name, price, is_available, menu_options(id, name, extra_price, is_available)')
       .eq('shop_id', shopId)
       .order('name')
     if (error) {
@@ -199,6 +199,49 @@ export default function ShopPage() {
     setNewName('')
     setNewPrice('')
     setNotice({ type: 'ok', text: 'เพิ่มเมนูแล้ว' })
+    loadMenu()
+  }
+
+  async function addOption(e, itemId) {
+    e.preventDefault()
+    const form = e.currentTarget
+    const data = new FormData(form)
+    const name = String(data.get('name') || '').trim()
+    const extra = Number(data.get('price') || 0)
+    if (!name || !Number.isFinite(extra) || extra < 0) {
+      setNotice({ type: 'error', text: 'กรอกชื่อตัวเลือก และราคาเพิ่ม (ใส่ 0 หรือเว้นว่างถ้าไม่เพิ่มราคา)' })
+      return
+    }
+    const { error } = await supabase
+      .from('menu_options')
+      .insert({ menu_item_id: itemId, name, extra_price: extra })
+    if (error) {
+      setNotice({ type: 'error', text: 'เพิ่มตัวเลือกไม่สำเร็จ: ' + error.message })
+      return
+    }
+    form.reset()
+    setNotice({ type: 'ok', text: `เพิ่มตัวเลือก "${name}" แล้ว` })
+    loadMenu()
+  }
+
+  async function toggleOption(opt) {
+    const { error } = await supabase
+      .from('menu_options')
+      .update({ is_available: !opt.is_available })
+      .eq('id', opt.id)
+    if (error) {
+      setNotice({ type: 'error', text: 'แก้ตัวเลือกไม่สำเร็จ: ' + error.message })
+      return
+    }
+    loadMenu()
+  }
+
+  async function deleteOption(opt) {
+    const { error } = await supabase.from('menu_options').delete().eq('id', opt.id)
+    if (error) {
+      setNotice({ type: 'error', text: 'ลบตัวเลือกไม่สำเร็จ: ' + error.message })
+      return
+    }
     loadMenu()
   }
 
@@ -303,7 +346,8 @@ export default function ShopPage() {
                           <ul className={styles.lines}>
                             {o.order_items.map((it, i) => (
                               <li key={i}>
-                                {it.name} × {it.quantity}
+                                {it.name}
+                                {it.options ? ` (${it.options})` : ''} × {it.quantity}
                               </li>
                             ))}
                           </ul>
@@ -332,17 +376,78 @@ export default function ShopPage() {
             <section aria-labelledby="h-menu">
               <h2 id="h-menu" className={styles.h2}>เมนูของร้าน</h2>
               <ul className={styles.list}>
-                {menu.map((m) => (
-                  <li key={m.id} className={`${styles.item} ${!m.is_available ? styles.soldOut : ''}`}>
-                    <div>
-                      <div className={styles.itemName}>{m.name}</div>
-                      <div className={styles.price}>{baht(m.price)}</div>
-                    </div>
-                    <button className={styles.ghost} onClick={() => toggleItem(m)} aria-pressed={m.is_available}>
-                      {m.is_available ? 'มีขาย (กดเพื่อตั้งเป็นหมด)' : 'หมด (กดเพื่อเปิดขาย)'}
-                    </button>
-                  </li>
-                ))}
+                {menu.map((m) => {
+                  const opts = [...(m.menu_options || [])].sort(
+                    (a, b) =>
+                      Number(a.extra_price) - Number(b.extra_price) || a.name.localeCompare(b.name, 'th')
+                  )
+                  return (
+                    <li key={m.id} className={`${styles.itemBlock} ${!m.is_available ? styles.soldOut : ''}`}>
+                      <div className={styles.itemRow}>
+                        <div>
+                          <div className={styles.itemName}>{m.name}</div>
+                          <div className={styles.price}>{baht(m.price)}</div>
+                        </div>
+                        <button className={styles.ghost} onClick={() => toggleItem(m)} aria-pressed={m.is_available}>
+                          {m.is_available ? 'มีขาย (กดเพื่อตั้งเป็นหมด)' : 'หมด (กดเพื่อเปิดขาย)'}
+                        </button>
+                      </div>
+
+                      <details className={styles.opts}>
+                        <summary>ตัวเลือกเสริม ({opts.length})</summary>
+                        {opts.length > 0 && (
+                          <ul className={styles.optList}>
+                            {opts.map((o) => (
+                              <li key={o.id} className={styles.optRow}>
+                                <span>
+                                  {o.name}{' '}
+                                  <span className={styles.price}>
+                                    {Number(o.extra_price) > 0 ? `+${baht(o.extra_price)}` : 'ฟรี'}
+                                  </span>
+                                  {!o.is_available && <span className={styles.gone}> หมด</span>}
+                                </span>
+                                <span className={styles.optBtns}>
+                                  <button
+                                    className={styles.ghost}
+                                    onClick={() => toggleOption(o)}
+                                    aria-pressed={o.is_available}
+                                  >
+                                    {o.is_available ? 'ตั้งเป็นหมด' : 'เปิดขาย'}
+                                  </button>
+                                  <button
+                                    className={styles.danger}
+                                    onClick={() => deleteOption(o)}
+                                    aria-label={`ลบตัวเลือก ${o.name} ของ ${m.name}`}
+                                  >
+                                    ลบ
+                                  </button>
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <form className={styles.optForm} onSubmit={(e) => addOption(e, m.id)}>
+                          <input
+                            className={styles.input}
+                            name="name"
+                            aria-label={`ชื่อตัวเลือกใหม่ของ ${m.name}`}
+                            placeholder="เช่น เพิ่มไข่ดาว"
+                          />
+                          <input
+                            className={styles.input}
+                            name="price"
+                            aria-label="ราคาที่เพิ่ม"
+                            placeholder="+ราคา"
+                            inputMode="decimal"
+                          />
+                          <button type="submit" className={styles.primary}>
+                            เพิ่ม
+                          </button>
+                        </form>
+                      </details>
+                    </li>
+                  )
+                })}
               </ul>
               <form className={styles.addForm} onSubmit={addItem}>
                 <input

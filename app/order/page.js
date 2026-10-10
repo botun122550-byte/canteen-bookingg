@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
@@ -14,15 +14,24 @@ const STATUS = {
   cancelled: { text: 'ยกเลิกแล้ว', cls: 'sCancel' },
 }
 
+const MAX_QTY = 20
+
 const pad = (n) => String(n).padStart(2, '0')
 const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`
 const baht = (n) => `฿${Number(n).toLocaleString('th-TH')}`
 
 function orderError(msg = '') {
   if (msg.includes('shop_closed')) return 'ร้านนี้ปิดรับออเดอร์อยู่ตอนนี้'
-  if (msg.includes('item_unavailable')) return 'มีเมนูที่หมดหรือถูกเอาออกแล้ว กรุณาเลือกใหม่'
+  if (msg.includes('item_unavailable')) return 'มีเมนูหรือตัวเลือกที่หมดแล้ว กรุณาตรวจสอบตะกร้าอีกครั้ง'
   if (msg.includes('empty_order')) return 'ยังไม่ได้เลือกเมนู'
   return 'สั่งอาหารไม่สำเร็จ: ' + msg
+}
+
+// เรียงตัวเลือก: ฟรีก่อน แล้วเรียงตามราคา และชื่อ
+function sortedOptions(item) {
+  return [...(item.menu_options || [])].sort(
+    (a, b) => Number(a.extra_price) - Number(b.extra_price) || a.name.localeCompare(b.name, 'th')
+  )
 }
 
 export default function OrderPage() {
@@ -32,7 +41,7 @@ export default function OrderPage() {
   const [shops, setShops] = useState([])
   const [shopId, setShopId] = useState(null)
   const [menu, setMenu] = useState([])
-  const [cart, setCart] = useState({})
+  const [cart, setCart] = useState([])
   const [bookings, setBookings] = useState([])
   const [deliverTo, setDeliverTo] = useState('pickup')
   const [note, setNote] = useState('')
@@ -40,9 +49,22 @@ export default function OrderPage() {
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState(null)
 
+  // หน้าต่างเลือกตัวเลือกเสริม
+  const dialogRef = useRef(null)
+  const [editing, setEditing] = useState(null)
+  const [draftOpts, setDraftOpts] = useState([])
+  const [draftQty, setDraftQty] = useState(1)
+
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    const d = dialogRef.current
+    if (!d) return
+    if (editing && !d.open) d.showModal()
+    if (!editing && d.open) d.close()
+  }, [editing])
 
   // สถานะล็อกอิน
   useEffect(() => {
@@ -74,7 +96,7 @@ export default function OrderPage() {
       })
   }, [user])
 
-  // เมนูของร้านที่เลือก
+  // เมนูของร้านที่เลือก (พร้อมตัวเลือกเสริมของแต่ละเมนู)
   const loadMenu = useCallback(async () => {
     if (!shopId) {
       setMenu([])
@@ -82,7 +104,7 @@ export default function OrderPage() {
     }
     const { data, error } = await supabase
       .from('menu_items')
-      .select('id, name, price, is_available')
+      .select('id, name, price, is_available, menu_options(id, name, extra_price, is_available)')
       .eq('shop_id', shopId)
       .order('name')
     if (error) {
@@ -115,7 +137,9 @@ export default function OrderPage() {
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
     const { data, error } = await supabase
       .from('orders')
-      .select('id, status, total_price, created_at, note, shops(name), tables(name), order_items(name, quantity)')
+      .select(
+        'id, status, total_price, created_at, note, shops(name), tables(name), order_items(name, quantity, options)'
+      )
       .eq('user_id', user.id)
       .gte('created_at', since)
       .order('created_at', { ascending: false })
@@ -130,13 +154,14 @@ export default function OrderPage() {
     loadOrders()
   }, [loadOrders])
 
-  // อัปเดตสถานะออเดอร์และเมนูแบบเรียลไทม์
+  // อัปเดตสถานะออเดอร์ เมนู และตัวเลือกแบบเรียลไทม์
   useEffect(() => {
     if (!user) return
     const channel = supabase
       .channel('order-page-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => loadOrders())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => loadMenu())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_options' }, () => loadMenu())
       .subscribe()
     return () => {
       supabase.removeChannel(channel)
@@ -148,33 +173,90 @@ export default function OrderPage() {
 
   function pickShop(id) {
     setShopId(id)
-    setCart({})
+    setCart([])
     setNotice(null)
   }
 
-  function setQty(id, delta) {
+  // ===== ตะกร้า =====
+  function addToCart(item, optionIds, qty) {
+    const ids = [...optionIds].sort()
+    const key = `${item.id}|${ids.join(',')}`
     setCart((cur) => {
-      const next = Math.min(20, Math.max(0, (cur[id] || 0) + delta))
-      const copy = { ...cur }
-      if (next === 0) delete copy[id]
-      else copy[id] = next
-      return copy
+      const found = cur.find((l) => l.key === key)
+      if (found) {
+        return cur.map((l) => (l.key === key ? { ...l, qty: Math.min(MAX_QTY, l.qty + qty) } : l))
+      }
+      return [...cur, { key, itemId: item.id, optionIds: ids, qty: Math.min(MAX_QTY, qty) }]
     })
+    setNotice(null)
   }
 
-  const lines = menu.filter((m) => cart[m.id] > 0)
-  const totalQty = lines.reduce((sum, m) => sum + cart[m.id], 0)
-  const totalPrice = lines.reduce((sum, m) => sum + cart[m.id] * Number(m.price), 0)
+  function changeLine(key, delta) {
+    setCart((cur) =>
+      cur
+        .map((l) => (l.key === key ? { ...l, qty: Math.min(MAX_QTY, l.qty + delta) } : l))
+        .filter((l) => l.qty > 0)
+    )
+  }
+
+  function openItem(item) {
+    const hasOptions = (item.menu_options || []).length > 0
+    if (!hasOptions) {
+      addToCart(item, [], 1)
+      return
+    }
+    setDraftOpts([])
+    setDraftQty(1)
+    setEditing(item)
+  }
+
+  function toggleDraft(id) {
+    setDraftOpts((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]))
+  }
+
+  function confirmDraft() {
+    if (!editing) return
+    addToCart(editing, draftOpts, draftQty)
+    setEditing(null)
+  }
+
+  // รวมรายละเอียดของแต่ละบรรทัดในตะกร้า
+  const cartLines = cart
+    .map((l) => {
+      const item = menu.find((m) => m.id === l.itemId)
+      if (!item) return null
+      const opts = (item.menu_options || []).filter((o) => l.optionIds.includes(o.id))
+      const unit = Number(item.price) + opts.reduce((sum, o) => sum + Number(o.extra_price), 0)
+      const available =
+        item.is_available && opts.length === l.optionIds.length && opts.every((o) => o.is_available)
+      return { ...l, item, opts, unit, total: unit * l.qty, available }
+    })
+    .filter(Boolean)
+
+  const totalQty = cartLines.reduce((sum, l) => sum + l.qty, 0)
+  const totalPrice = cartLines.reduce((sum, l) => sum + l.total, 0)
+  const hasUnavailable = cartLines.some((l) => !l.available)
+
+  const draftUnit = editing
+    ? Number(editing.price) +
+      (editing.menu_options || [])
+        .filter((o) => draftOpts.includes(o.id))
+        .reduce((sum, o) => sum + Number(o.extra_price), 0)
+    : 0
 
   async function placeOrder() {
-    if (!lines.length || !shopOpen) return
+    if (!cartLines.length || !shopOpen || hasUnavailable) return
     setSaving(true)
     setNotice(null)
     const { error } = await supabase.rpc('place_order', {
       p_shop_id: shopId,
       p_table_id: deliverTo === 'pickup' ? null : deliverTo,
       p_note: note,
-      p_items: lines.map((m) => ({ menu_item_id: m.id, quantity: cart[m.id] })),
+      p_items: cartLines.map((l) => ({
+        menu_item_id: l.itemId,
+        quantity: l.qty,
+        option_ids: l.optionIds,
+      })),
     })
     setSaving(false)
     if (error) {
@@ -183,7 +265,7 @@ export default function OrderPage() {
       return
     }
     setNotice({ type: 'ok', text: 'ส่งออเดอร์แล้ว รอร้านรับออเดอร์ ดูสถานะได้ที่ด้านล่าง' })
-    setCart({})
+    setCart([])
     setNote('')
     loadOrders()
   }
@@ -267,23 +349,25 @@ export default function OrderPage() {
             {menu.length === 0 && <p className={styles.hint}>ร้านนี้ยังไม่มีเมนู</p>}
             <ul className={styles.list}>
               {menu.map((m) => {
-                const qty = cart[m.id] || 0
+                const optCount = (m.menu_options || []).length
                 const canAdd = m.is_available && shopOpen
                 return (
                   <li key={m.id} className={`${styles.item} ${!m.is_available ? styles.soldOut : ''}`}>
                     <div>
                       <div className={styles.itemName}>{m.name}</div>
                       <div className={styles.price}>{m.is_available ? baht(m.price) : 'หมด'}</div>
+                      {optCount > 0 && m.is_available && (
+                        <div className={styles.itemHint}>มีตัวเลือกเสริม</div>
+                      )}
                     </div>
-                    <div className={styles.stepper}>
-                      <button aria-label={`ลด ${m.name}`} onClick={() => setQty(m.id, -1)} disabled={!qty}>
-                        −
-                      </button>
-                      <span aria-live="polite">{qty}</span>
-                      <button aria-label={`เพิ่ม ${m.name}`} onClick={() => setQty(m.id, 1)} disabled={!canAdd}>
-                        +
-                      </button>
-                    </div>
+                    <button
+                      className={styles.addBtn}
+                      disabled={!canAdd}
+                      onClick={() => openItem(m)}
+                      aria-label={`${optCount > 0 ? 'เลือกตัวเลือกและเพิ่ม' : 'เพิ่ม'} ${m.name}`}
+                    >
+                      {optCount > 0 ? 'เลือก' : 'เพิ่ม'}
+                    </button>
                   </li>
                 )
               })}
@@ -291,7 +375,40 @@ export default function OrderPage() {
           </section>
         )}
 
-        {lines.length > 0 && (
+        {cartLines.length > 0 && (
+          <section aria-labelledby="h-cart">
+            <h2 id="h-cart" className={styles.h2}>ตะกร้า</h2>
+            <ul className={styles.list}>
+              {cartLines.map((l) => (
+                <li key={l.key} className={styles.cartLine}>
+                  <div>
+                    <div className={styles.itemName}>{l.item.name}</div>
+                    {l.opts.length > 0 && (
+                      <div className={styles.cartOpts}>{l.opts.map((o) => o.name).join(', ')}</div>
+                    )}
+                    <div className={styles.price}>{baht(l.total)}</div>
+                    {!l.available && <div className={styles.gone}>มีรายการที่หมดแล้ว ลบออกก่อนสั่ง</div>}
+                  </div>
+                  <div className={styles.stepper}>
+                    <button aria-label={`ลด ${l.item.name}`} onClick={() => changeLine(l.key, -1)}>
+                      −
+                    </button>
+                    <span aria-live="polite">{l.qty}</span>
+                    <button
+                      aria-label={`เพิ่ม ${l.item.name}`}
+                      onClick={() => changeLine(l.key, 1)}
+                      disabled={l.qty >= MAX_QTY || !l.available}
+                    >
+                      +
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {cartLines.length > 0 && (
           <section aria-labelledby="h-deliver">
             <h2 id="h-deliver" className={styles.h2}>รับอาหารที่ไหน</h2>
             <div className={styles.field}>
@@ -320,7 +437,7 @@ export default function OrderPage() {
                 className={styles.input}
                 value={note}
                 maxLength={120}
-                placeholder="เช่น ไม่ใส่ผัก เผ็ดน้อย"
+                placeholder="เช่น ขอช้อนส้อมเพิ่ม"
                 onChange={(e) => setNote(e.target.value)}
               />
             </div>
@@ -345,7 +462,8 @@ export default function OrderPage() {
                   <ul className={styles.lines}>
                     {o.order_items.map((it, i) => (
                       <li key={i}>
-                        {it.name} × {it.quantity}
+                        {it.name}
+                        {it.options ? ` (${it.options})` : ''} × {it.quantity}
                       </li>
                     ))}
                   </ul>
@@ -372,12 +490,76 @@ export default function OrderPage() {
               <strong>{baht(totalPrice)}</strong>
               <div className={styles.barSub}>{totalQty} รายการ จาก {shop?.name}</div>
             </div>
-            <button className={styles.confirm} onClick={placeOrder} disabled={saving || !shopOpen}>
+            <button
+              className={styles.confirm}
+              onClick={placeOrder}
+              disabled={saving || !shopOpen || hasUnavailable}
+            >
               {saving ? 'กำลังส่ง...' : 'สั่งอาหาร'}
             </button>
           </div>
         </div>
       )}
+
+      <dialog
+        ref={dialogRef}
+        className={styles.dialog}
+        aria-labelledby="dlg-title"
+        onClose={() => setEditing(null)}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setEditing(null)
+        }}
+      >
+        {editing && (
+          <div className={styles.sheet}>
+            <h2 id="dlg-title" className={styles.sheetTitle}>{editing.name}</h2>
+            <p className={styles.price}>ราคาเริ่มต้น {baht(editing.price)}</p>
+
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.label}>ตัวเลือกเสริม (เลือกได้หลายอย่าง)</legend>
+              {sortedOptions(editing).map((o) => (
+                <label key={o.id} className={`${styles.check} ${!o.is_available ? styles.soldOut : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={draftOpts.includes(o.id)}
+                    disabled={!o.is_available}
+                    onChange={() => toggleDraft(o.id)}
+                  />
+                  <span>
+                    {o.name}
+                    {!o.is_available && ' (หมด)'}
+                  </span>
+                  <span className={styles.price}>
+                    {Number(o.extra_price) > 0 ? `+${baht(o.extra_price)}` : 'ฟรี'}
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+
+            <div className={styles.sheetQty}>
+              <span className={styles.label}>จำนวน</span>
+              <div className={styles.stepper}>
+                <button aria-label="ลดจำนวน" onClick={() => setDraftQty((q) => Math.max(1, q - 1))} disabled={draftQty <= 1}>
+                  −
+                </button>
+                <span aria-live="polite">{draftQty}</span>
+                <button aria-label="เพิ่มจำนวน" onClick={() => setDraftQty((q) => Math.min(MAX_QTY, q + 1))} disabled={draftQty >= MAX_QTY}>
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.sheetActions}>
+              <button className={styles.ghost} onClick={() => setEditing(null)}>
+                ปิด
+              </button>
+              <button className={styles.confirm} onClick={confirmDraft}>
+                เพิ่มลงตะกร้า {baht(draftUnit * draftQty)}
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
     </div>
   )
 }

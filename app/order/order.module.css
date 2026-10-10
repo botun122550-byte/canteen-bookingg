@@ -465,3 +465,199 @@
     transition: none !important;
   }
 }
+
+/* ===== เฟส 3: ตัวเลือกเสริมในเมนู ===== */
+.itemHint {
+  font-size: 0.8rem;
+  color: var(--mine);
+}
+
+.addBtn {
+  padding: 10px 18px;
+  background: var(--free);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.addBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cartLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+}
+
+.cartOpts {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.gone {
+  font-size: 0.85rem;
+  color: var(--taken);
+  font-weight: 600;
+}
+
+/* หน้าต่างเลือกตัวเลือก (แถบเลื่อนขึ้นจากด้านล่างบนมือถือ) */
+.dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: 85dvh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--card);
+  color: var(--ink);
+  overflow: auto;
+}
+
+.dialog::backdrop {
+  background: rgba(10, 20, 24, 0.55);
+}
+
+@media (min-width: 600px) {
+  .dialog {
+    margin: auto;
+    border-radius: 20px;
+  }
+}
+
+.sheet {
+  padding: 20px 18px calc(18px + env(safe-area-inset-bottom));
+}
+
+.sheetTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.fieldset {
+  margin: 14px 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldset legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+.check {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--free);
+}
+
+.check:has(input:checked) {
+  border-color: var(--free);
+  background: var(--free-soft);
+}
+
+.sheetQty {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 16px;
+}
+
+.sheetActions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+}
+
+/* จัดการเมนูและตัวเลือกในหน้าร้านค้า */
+.itemBlock {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.itemBlock.soldOut {
+  opacity: 0.7;
+}
+
+.opts {
+  margin-top: 10px;
+}
+
+.opts summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--mine);
+  padding: 4px 0;
+}
+
+.optList {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.optRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.optBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.optForm {
+  display: grid;
+  grid-template-columns: 1fr 90px auto;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sheetActions button:focus-visible,
+.addBtn:focus-visible,
+.check input:focus-visible,
+.opts summary:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
