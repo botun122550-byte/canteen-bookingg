@@ -1,5 +1,7 @@
+// app/api/telegram/notify/route.js
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 import { safeEqual, sendMessage } from '../../../../lib/telegram'
+import { sendRatingPrompt } from '../../../../lib/telegramExtra'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -25,61 +27,54 @@ function whereText(order) {
 }
 
 // สร้างรายการข้อความที่ต้องส่ง: [{ userId, text, path, label }]
-function buildMessages(order, type, oldStatus) {
-  const shortId = order.id.slice(0, 4).toUpperCase()
+function buildMessages(order, type, old) {
+  const ref = order.queue_no ? `คิว ${order.queue_no}` : `#${order.id.slice(0, 4).toUpperCase()}`
   const shopName = order.shops?.name ?? ''
   const ownerId = order.shops?.owner_id
   const out = []
+  const toCustomer = (text) =>
+    out.push({ userId: order.user_id, path: '/order', label: 'ดูออเดอร์ของฉัน', text })
+  const toOwner = (text) => {
+    if (ownerId) out.push({ userId: ownerId, path: '/shop', label: 'เปิดหน้าร้าน', text })
+  }
 
   if (type === 'INSERT') {
-    if (ownerId) {
-      out.push({
-        userId: ownerId,
-        path: '/shop',
-        label: 'เปิดหน้าร้าน',
-        text:
-          `🔔 ออเดอร์ใหม่ #${shortId}\n` +
-          `${whereText(order)}\n` +
-          `${itemLines(order)}\n` +
-          (order.note ? `หมายเหตุ: ${order.note}\n` : '') +
-          `รวม ${baht(order.total_price)}`,
-      })
-    }
+    toOwner(
+      `🔔 ออเดอร์ใหม่ ${ref}\n` +
+        `${whereText(order)}\n` +
+        `${itemLines(order)}\n` +
+        (order.note ? `หมายเหตุ: ${order.note}\n` : '') +
+        `รวม ${baht(order.total_price)}`
+    )
     return out
   }
 
-  if (type !== 'UPDATE' || order.status === oldStatus) return out
+  if (type !== 'UPDATE') return out
 
-  if (order.status === 'cooking') {
-    out.push({
-      userId: order.user_id,
-      path: '/order',
-      label: 'ดูออเดอร์ของฉัน',
-      text: `👩‍🍳 ร้าน${shopName}รับออเดอร์ #${shortId} แล้ว กำลังทำอาหาร`,
-    })
-  } else if (order.status === 'ready') {
-    out.push({
-      userId: order.user_id,
-      path: '/order',
-      label: 'ดูออเดอร์ของฉัน',
-      text:
-        `✅ ออเดอร์ #${shortId} จากร้าน${shopName} พร้อมรับแล้ว\n` +
-        (order.tables?.name ? `ร้านจะส่งที่โต๊ะ ${order.tables.name}` : 'มารับที่ร้านได้เลยครับ'),
-    })
-  } else if (order.status === 'cancelled') {
-    out.push({
-      userId: order.user_id,
-      path: '/order',
-      label: 'ดูออเดอร์ของฉัน',
-      text: `❌ ออเดอร์ #${shortId} จากร้าน${shopName} ถูกยกเลิกแล้ว`,
-    })
-    if (ownerId) {
-      out.push({
-        userId: ownerId,
-        path: '/shop',
-        label: 'เปิดหน้าร้าน',
-        text: `❌ ออเดอร์ #${shortId} ถูกยกเลิก`,
-      })
+  if (order.status !== old?.status) {
+    if (order.status === 'cooking') {
+      toCustomer(`👩‍🍳 ร้าน${shopName}รับออเดอร์ ${ref} แล้ว กำลังทำอาหาร`)
+    } else if (order.status === 'ready') {
+      toCustomer(
+        `✅ ออเดอร์ ${ref} จากร้าน${shopName} พร้อมรับแล้ว\n` +
+          (order.tables?.name ? `ร้านจะส่งที่โต๊ะ ${order.tables.name}` : 'มารับที่ร้านได้เลยครับ')
+      )
+    } else if (order.status === 'cancelled') {
+      toCustomer(
+        `❌ ออเดอร์ ${ref} จากร้าน${shopName} ถูกยกเลิกแล้ว` +
+          (order.reject_reason ? `\nเหตุผล: ${order.reject_reason}` : '')
+      )
+      toOwner(`❌ ออเดอร์ ${ref} ถูกยกเลิก`)
+    }
+  }
+
+  if (order.payment_status !== old?.payment_status) {
+    if (order.payment_status === 'slip_sent') {
+      toOwner(`💸 ลูกค้าแนบสลิปออเดอร์ ${ref} ยอด ${baht(order.total_price)} กรุณาตรวจสอบในหน้าร้าน`)
+    } else if (order.payment_status === 'paid') {
+      toCustomer(`✅ ร้าน${shopName}ยืนยันการชำระเงินออเดอร์ ${ref} แล้ว`)
+    } else if (order.payment_status === 'unpaid' && old?.payment_status === 'slip_sent') {
+      toCustomer(`⚠️ ร้าน${shopName}ตรวจสลิปออเดอร์ ${ref} ไม่ผ่าน กรุณาตรวจสอบแล้วแนบใหม่ในหน้าเว็บ`)
     }
   }
   return out
@@ -106,7 +101,7 @@ export async function POST(request) {
   const { data: order, error } = await db
     .from('orders')
     .select(
-      'id, status, total_price, note, user_id, tables(name), shops(name, owner_id), order_items(name, quantity, options)'
+      'id, status, total_price, note, user_id, queue_no, reject_reason, payment_status, tables(name), shops(name, owner_id), order_items(name, quantity, options)'
     )
     .eq('id', record.id)
     .single()
@@ -116,13 +111,18 @@ export async function POST(request) {
     return Response.json({ ok: false })
   }
 
-  const messages = buildMessages(order, payload.type, payload.old_record?.status)
-  if (messages.length === 0) return Response.json({ ok: true, skipped: 'not needed' })
+  const old = payload.old_record
+  const messages = buildMessages(order, payload.type, old)
+  const askRating = payload.type === 'UPDATE' && order.status === 'done' && old?.status !== 'done'
+  if (messages.length === 0 && !askRating) return Response.json({ ok: true, skipped: 'not needed' })
+
+  const userIds = new Set(messages.map((m) => m.userId))
+  if (askRating) userIds.add(order.user_id)
 
   const { data: links } = await db
     .from('telegram_links')
     .select('user_id, chat_id')
-    .in('user_id', [...new Set(messages.map((m) => m.userId))])
+    .in('user_id', [...userIds])
 
   const chatByUser = Object.fromEntries((links || []).map((l) => [l.user_id, l.chat_id]))
   const base = siteUrl()
@@ -137,6 +137,10 @@ export async function POST(request) {
     if (res.status === 403) {
       await db.from('telegram_links').delete().eq('chat_id', chatId)
     }
+  }
+
+  if (askRating && chatByUser[order.user_id]) {
+    await sendRatingPrompt(chatByUser[order.user_id], order.id, order.shops?.name ?? '')
   }
 
   return Response.json({ ok: true, sent })

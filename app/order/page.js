@@ -1,10 +1,13 @@
 'use client'
 
+// app/order/page.js
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
 import TelegramLink from '../../components/TelegramLink'
+import PaymentBox from '../../components/PaymentBox'
+import ReviewBox from '../../components/ReviewBox'
 import styles from './order.module.css'
 
 const STATUS = {
@@ -20,6 +23,16 @@ const MAX_QTY = 20
 const pad = (n) => String(n).padStart(2, '0')
 const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`
 const baht = (n) => `฿${Number(n).toLocaleString('th-TH')}`
+
+const badge = (bg) => ({
+  display: 'inline-block',
+  marginLeft: 6,
+  padding: '1px 8px',
+  borderRadius: 999,
+  fontSize: 12,
+  background: bg,
+  color: '#fff',
+})
 
 function orderError(msg = '') {
   if (msg.includes('shop_closed')) return 'ร้านนี้ปิดรับออเดอร์อยู่ตอนนี้'
@@ -42,6 +55,10 @@ export default function OrderPage() {
   const [shops, setShops] = useState([])
   const [shopId, setShopId] = useState(null)
   const [menu, setMenu] = useState([])
+  const [best, setBest] = useState([])
+  const [waiting, setWaiting] = useState({})
+  const [ratings, setRatings] = useState({})
+  const [myReviews, setMyReviews] = useState({})
   const [cart, setCart] = useState([])
   const [bookings, setBookings] = useState([])
   const [deliverTo, setDeliverTo] = useState('pickup')
@@ -79,12 +96,12 @@ export default function OrderPage() {
     return () => sub.subscription.unsubscribe()
   }, [])
 
-  // รายชื่อร้าน
+  // รายชื่อร้าน + คะแนนเฉลี่ย
   useEffect(() => {
     if (!user) return
     supabase
       .from('shops')
-      .select('id, name, is_open')
+      .select('id, name, is_open, minutes_per_order')
       .order('name')
       .then(({ data, error }) => {
         if (error) {
@@ -95,17 +112,34 @@ export default function OrderPage() {
         setShops(list)
         setShopId((cur) => cur ?? (list.find((s) => s.is_open) || list[0])?.id ?? null)
       })
+    supabase.rpc('shop_ratings').then(({ data }) => {
+      setRatings(Object.fromEntries((data || []).map((r) => [r.shop_id, r])))
+    })
   }, [user])
 
-  // เมนูของร้านที่เลือก (พร้อมตัวเลือกเสริมของแต่ละเมนู)
+  // จำนวนออเดอร์ที่ค้างอยู่ในแต่ละร้าน (ใช้ประมาณเวลารอ)
+  const loadWaiting = useCallback(async () => {
+    const { data } = await supabase.rpc('shop_queue_counts')
+    setWaiting(Object.fromEntries((data || []).map((r) => [r.shop_id, Number(r.waiting)])))
+  }, [])
+
+  useEffect(() => {
+    if (!user) return
+    loadWaiting()
+    const t = setInterval(loadWaiting, 30000)
+    return () => clearInterval(t)
+  }, [user, loadWaiting])
+
+  // เมนูของร้านที่เลือก (พร้อมตัวเลือกเสริม) + เมนูขายดี
   const loadMenu = useCallback(async () => {
     if (!shopId) {
       setMenu([])
+      setBest([])
       return
     }
     const { data, error } = await supabase
       .from('menu_items')
-      .select('id, name, price, is_available, menu_options(id, name, extra_price, is_available)')
+      .select('id, name, price, is_available, is_recommended, menu_options(id, name, extra_price, is_available)')
       .eq('shop_id', shopId)
       .order('name')
     if (error) {
@@ -113,6 +147,8 @@ export default function OrderPage() {
       return
     }
     setMenu(data || [])
+    const { data: b } = await supabase.rpc('best_sellers', { p_shop_id: shopId })
+    setBest((b || []).filter((r) => Number(r.qty) >= 3).map((r) => r.name))
   }, [shopId])
 
   useEffect(() => {
@@ -132,14 +168,14 @@ export default function OrderPage() {
       .then(({ data }) => setBookings(data || []))
   }, [user])
 
-  // ออเดอร์ของฉัน (24 ชั่วโมงล่าสุด)
+  // ออเดอร์ของฉัน (24 ชั่วโมงล่าสุด) + รีวิวที่เคยให้
   const loadOrders = useCallback(async () => {
     if (!user) return
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
     const { data, error } = await supabase
       .from('orders')
       .select(
-        'id, status, total_price, created_at, note, shops(name), tables(name), order_items(name, quantity, options)'
+        'id, status, total_price, created_at, note, queue_no, reject_reason, payment_status, slip_path, shops(name, promptpay_id), tables(name), order_items(name, quantity, options)'
       )
       .eq('user_id', user.id)
       .gte('created_at', since)
@@ -149,6 +185,11 @@ export default function OrderPage() {
       return
     }
     setMyOrders(data || [])
+    const { data: rv } = await supabase
+      .from('reviews')
+      .select('order_id, rating, comment')
+      .eq('user_id', user.id)
+    setMyReviews(Object.fromEntries((rv || []).map((r) => [r.order_id, r])))
   }, [user])
 
   useEffect(() => {
@@ -160,17 +201,32 @@ export default function OrderPage() {
     if (!user) return
     const channel = supabase
       .channel('order-page-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => loadOrders())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+        loadOrders()
+        loadWaiting()
+      })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => loadMenu())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_options' }, () => loadMenu())
       .subscribe()
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [user, loadOrders, loadMenu])
+  }, [user, loadOrders, loadMenu, loadWaiting])
 
   const shop = shops.find((s) => s.id === shopId) || null
   const shopOpen = Boolean(shop?.is_open)
+  const waitingNow = shop ? waiting[shop.id] ?? 0 : 0
+  const etaMinutes = shop ? (waitingNow + 1) * (shop.minutes_per_order || 5) : 0
+
+  // ขายดีก่อน แล้วเมนูแนะนำ แล้วเรียงตามชื่อ เมนูที่หมดไว้ท้ายสุด
+  const rank = (m) => (best.indexOf(m.name) >= 0 ? best.indexOf(m.name) : 99)
+  const sortedMenu = [...menu].sort(
+    (a, b) =>
+      Number(b.is_available) - Number(a.is_available) ||
+      rank(a) - rank(b) ||
+      Number(b.is_recommended) - Number(a.is_recommended) ||
+      a.name.localeCompare(b.name, 'th')
+  )
 
   function pickShop(id) {
     setShopId(id)
@@ -265,10 +321,11 @@ export default function OrderPage() {
       loadMenu()
       return
     }
-    setNotice({ type: 'ok', text: 'ส่งออเดอร์แล้ว รอร้านรับออเดอร์ ดูสถานะได้ที่ด้านล่าง' })
+    setNotice({ type: 'ok', text: 'ส่งออเดอร์แล้ว รอร้านรับออเดอร์ ดูสถานะและชำระเงินได้ที่ด้านล่าง' })
     setCart([])
     setNote('')
     loadOrders()
+    loadWaiting()
   }
 
   async function cancelOrder(id) {
@@ -339,6 +396,7 @@ export default function OrderPage() {
                 onClick={() => pickShop(s.id)}
               >
                 {s.name}
+                {ratings[s.id] && ` ★${ratings[s.id].avg_rating}`}
                 {!s.is_open && ' (ปิด)'}
               </button>
             ))}
@@ -348,16 +406,26 @@ export default function OrderPage() {
         {shop && (
           <section aria-labelledby="h-menu">
             <h2 id="h-menu" className={styles.h2}>เมนู {shop.name}</h2>
+            {shopOpen && (
+              <p className={styles.hint}>
+                ⏱ ประมาณ {etaMinutes} นาที (มีคิวรออยู่ {waitingNow} ออเดอร์)
+                {ratings[shop.id] && ` · ★${ratings[shop.id].avg_rating} จาก ${ratings[shop.id].review_count} รีวิว`}
+              </p>
+            )}
             {!shopOpen && <p className={styles.hint}>ร้านนี้ปิดรับออเดอร์อยู่ตอนนี้ ลองเลือกร้านอื่นดู</p>}
             {menu.length === 0 && <p className={styles.hint}>ร้านนี้ยังไม่มีเมนู</p>}
             <ul className={styles.list}>
-              {menu.map((m) => {
+              {sortedMenu.map((m) => {
                 const optCount = (m.menu_options || []).length
                 const canAdd = m.is_available && shopOpen
                 return (
                   <li key={m.id} className={`${styles.item} ${!m.is_available ? styles.soldOut : ''}`}>
                     <div>
-                      <div className={styles.itemName}>{m.name}</div>
+                      <div className={styles.itemName}>
+                        {m.name}
+                        {m.is_available && best.includes(m.name) && <span style={badge('#d9480f')}>ขายดี</span>}
+                        {m.is_available && m.is_recommended && <span style={badge('#e8590c')}>แนะนำ</span>}
+                      </div>
                       <div className={styles.price}>{m.is_available ? baht(m.price) : 'หมด'}</div>
                       {optCount > 0 && m.is_available && (
                         <div className={styles.itemHint}>มีตัวเลือกเสริม</div>
@@ -456,7 +524,9 @@ export default function OrderPage() {
               return (
                 <li key={o.id} className={styles.order}>
                   <div className={styles.orderHead}>
-                    <strong>{o.shops?.name}</strong>
+                    <strong>
+                      {o.queue_no ? `คิว ${o.queue_no}` : `#${o.id.slice(0, 4).toUpperCase()}`} · {o.shops?.name}
+                    </strong>
                     <span className={`${styles.pill} ${styles[st.cls]}`}>{st.text}</span>
                   </div>
                   <div className={styles.orderMeta}>
@@ -471,6 +541,9 @@ export default function OrderPage() {
                     ))}
                   </ul>
                   {o.note && <p className={styles.note}>หมายเหตุ: {o.note}</p>}
+                  {o.status === 'cancelled' && o.reject_reason && (
+                    <p className={styles.note}>เหตุผลที่ร้านแจ้ง: {o.reject_reason}</p>
+                  )}
                   <div className={styles.orderFoot}>
                     <strong>{baht(o.total_price)}</strong>
                     {o.status === 'new' && (
@@ -479,6 +552,17 @@ export default function OrderPage() {
                       </button>
                     )}
                   </div>
+                  {o.status !== 'cancelled' && (
+                    <PaymentBox order={o} userId={user.id} onChanged={loadOrders} />
+                  )}
+                  {o.status === 'done' && (
+                    <ReviewBox
+                      key={`${o.id}-${myReviews[o.id]?.rating ?? 0}`}
+                      orderId={o.id}
+                      review={myReviews[o.id]}
+                      onSaved={loadOrders}
+                    />
+                  )}
                 </li>
               )
             })}
