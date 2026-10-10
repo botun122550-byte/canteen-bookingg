@@ -4,7 +4,10 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import styles from './AuthBox.module.css'
 
-export default function AuthBox() {
+export default function AuthBox({
+  title = 'จองโต๊ะโรงอาหาร',
+  subtitle = 'เข้าสู่ระบบด้วยอีเมลเพื่อจองโต๊ะ',
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -33,8 +36,8 @@ export default function AuthBox() {
   return (
     <main className={styles.wrap}>
       <div className={styles.card}>
-        <h1 className={styles.title}>จองโต๊ะโรงอาหาร</h1>
-        <p className={styles.sub}>เข้าสู่ระบบด้วยอีเมลเพื่อจองโต๊ะ</p>
+        <h1 className={styles.title}>{title}</h1>
+        <p className={styles.sub}>{subtitle}</p>
 
         <label className={styles.label} htmlFor="email">อีเมล</label>
         <input

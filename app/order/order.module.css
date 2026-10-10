@@ -661,3 +661,65 @@
   outline: 3px solid var(--mine);
   outline-offset: 2px;
 }
+
+/* ===== เฟส 4: หน้าแรกและการผูกบัญชีร้านค้า ===== */
+.group {
+  margin-top: 24px;
+}
+
+.groupTitle {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.groupSub {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entry {
+  display: block;
+  padding: 16px 16px 16px 20px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-left: 8px solid var(--free);
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.entryVendor {
+  border-left-color: var(--mine);
+}
+
+.entryTitle {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.entryText {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.entry:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+.claimForm {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}

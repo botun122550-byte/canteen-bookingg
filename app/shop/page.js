@@ -51,6 +51,8 @@ export default function ShopPage() {
   const [sound, setSound] = useState(false)
   const [newName, setNewName] = useState('')
   const [newPrice, setNewPrice] = useState('')
+  const [claimCode, setClaimCode] = useState('')
+  const [claiming, setClaiming] = useState(false)
   const [notice, setNotice] = useState(null)
 
   const soundRef = useRef(false)
@@ -245,6 +247,27 @@ export default function ShopPage() {
     loadMenu()
   }
 
+  async function claimShop(e) {
+    e.preventDefault()
+    const code = claimCode.trim().toUpperCase()
+    if (!code) return
+    setClaiming(true)
+    setNotice(null)
+    const { data, error } = await supabase.rpc('claim_shop', { p_code: code })
+    setClaiming(false)
+    if (error || !data) {
+      setNotice({
+        type: 'error',
+        text: 'รหัสร้านไม่ถูกต้อง หรือถูกใช้ไปแล้ว ตรวจสอบกับผู้ดูแลระบบอีกครั้ง',
+      })
+      return
+    }
+    setClaimCode('')
+    setNotice({ type: 'ok', text: 'ผูกบัญชีกับร้านเรียบร้อยแล้ว' })
+    setShopId(data)
+    loadShops()
+  }
+
   function turnOnSound() {
     const next = !sound
     setSound(next)
@@ -262,7 +285,7 @@ export default function ShopPage() {
   if (!user) {
     return (
       <div className={styles.shell}>
-        <AuthBox />
+        <AuthBox title="หน้าร้านค้า" subtitle="เข้าสู่ระบบเพื่อรับออเดอร์และจัดการเมนู" />
       </div>
     )
   }
@@ -289,9 +312,26 @@ export default function ShopPage() {
         )}
 
         {shopsLoaded && shops.length === 0 && (
-          <p className={styles.hint}>
-            บัญชีนี้ยังไม่ได้ผูกกับร้านใด ให้ผู้ดูแลระบบใส่ User ID ของบัญชีนี้ในช่อง owner_id ของตาราง shops ที่ Supabase
-          </p>
+          <section aria-labelledby="h-claim">
+            <h2 id="h-claim" className={styles.h2}>ผูกบัญชีกับร้านของคุณ</h2>
+            <p className={styles.hint}>
+              กรอกรหัสร้านที่ได้จากผู้ดูแลระบบ รหัสใช้ได้ครั้งเดียว ผูกแล้วจะเริ่มรับออเดอร์และจัดการเมนูได้ทันที
+            </p>
+            <form className={styles.claimForm} onSubmit={claimShop}>
+              <input
+                className={styles.input}
+                aria-label="รหัสร้าน"
+                placeholder="รหัสร้าน"
+                autoCapitalize="characters"
+                autoComplete="off"
+                value={claimCode}
+                onChange={(e) => setClaimCode(e.target.value)}
+              />
+              <button type="submit" className={styles.primary} disabled={claiming || !claimCode.trim()}>
+                {claiming ? 'กำลังตรวจสอบ...' : 'ผูกบัญชี'}
+              </button>
+            </form>
+          </section>
         )}
 
         {shops.length > 1 && (

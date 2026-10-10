@@ -295,7 +295,7 @@ export default function OrderPage() {
   if (!user) {
     return (
       <div className={styles.shell}>
-        <AuthBox />
+        <AuthBox title="สั่งอาหาร" subtitle="เข้าสู่ระบบด้วยอีเมลเพื่อสั่งอาหาร" />
       </div>
     )
   }
