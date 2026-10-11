@@ -1,114 +1,127 @@
+/* กล่องแจ้งเตือน Telegram : ธีมสว่าง ใช้สีส้มของหน้าที่วางอยู่ (--brand) */
 .card {
-  margin: 16px 0;
-  padding: 14px 16px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-left: 8px solid var(--free);
-  border-radius: 14px;
+  --tg-brand: var(--brand, #c2410c);
+  --tg-brand-dark: var(--brand-dark, #9a3412);
+
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--card, #fff);
+  border: 1.5px solid var(--line, #f2e3d2);
+  border-left: 6px solid var(--sun, #f26b1d);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(120, 53, 15, 0.06), 0 6px 16px rgba(120, 53, 15, 0.07);
 }
 
 .title {
   margin: 0 0 4px;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
 .text {
-  margin: 4px 0 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin: 4px 0 12px;
+  color: var(--muted, #6b5d52);
+  font-size: 0.95rem;
 }
 
 .ok {
-  margin: 4px 0 10px;
-  color: var(--free);
+  margin: 4px 0 12px;
+  color: #166534;
   font-weight: 600;
+}
+
+.ok::before {
+  content: '✓ ';
 }
 
 .steps {
   margin: 4px 0;
   padding-left: 20px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .link {
-  color: var(--mine);
+  color: #1d4ed8;
   font-weight: 600;
 }
 
 .code {
-  margin: 8px 0;
+  margin: 10px 0;
   padding: 12px;
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: 0.3em;
-  background: var(--free-soft);
-  border: 2px dashed var(--free);
-  border-radius: 12px;
+  background: #fff1e2;
+  border: 2px dashed var(--tg-brand);
+  border-radius: 14px;
   user-select: all;
 }
 
 .primary,
-.ghost {
-  padding: 10px 16px;
-  border-radius: 10px;
+.ghost,
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 12px;
   font-weight: 600;
+  text-decoration: none;
 }
 
-.primary {
-  background: var(--free);
+.primary,
+.primaryLink {
+  background: var(--tg-brand);
   color: #fff;
-  border: 0;
+  border: 1.5px solid var(--tg-brand);
 }
 
 .ghost {
-  background: transparent;
-  border: 1.5px solid var(--line);
-  font-weight: 500;
+  background: var(--card, #fff);
+  color: var(--ink, #33261c);
+  border: 1.5px solid #e3cdb6;
+}
+
+@media (hover: hover) {
+  .primary:hover,
+  .primaryLink:hover {
+    background: var(--tg-brand-dark);
+  }
+  .ghost:hover {
+    background: var(--brand-soft, #ffedd5);
+  }
 }
 
 .primary:disabled,
 .ghost:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: wait;
 }
 
 .primary:focus-visible,
 .ghost:focus-visible,
-.link:focus-visible {
-  outline: 3px solid var(--mine);
+.link:focus-visible,
+.primaryLink:focus-visible {
+  outline: 3px solid #1d4ed8;
   outline-offset: 2px;
 }
 
 .error {
-  margin: 8px 0 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--taken-soft);
-  color: var(--taken);
-  font-size: 0.9rem;
-}
-
-.primaryLink {
-  display: inline-block;
-  padding: 12px 18px;
-  background: var(--free);
-  color: #fff;
+  margin: 10px 0 0;
+  padding: 10px 12px;
   border-radius: 10px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.primaryLink:focus-visible {
-  outline: 3px solid var(--mine);
-  outline-offset: 2px;
+  background: #fef2f2;
+  border: 1.5px solid #f3a5a5;
+  color: #991b1b;
+  font-size: 0.95rem;
 }
 
 .cmd {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  background: var(--bg);
+  background: #fff1e2;
   padding: 2px 6px;
   border-radius: 6px;
   word-break: break-all;
