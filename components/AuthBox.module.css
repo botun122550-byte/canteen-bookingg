@@ -1,3 +1,4 @@
+/* กล่องเข้าสู่ระบบ : ธีมสว่าง ใช้สีส้มของหน้าที่วางอยู่ (--brand) */
 .wrap {
   min-height: 100dvh;
   display: grid;
@@ -6,91 +7,116 @@
 }
 
 .card {
+  --au-brand: var(--brand, #c2410c);
+  --au-brand-dark: var(--brand-dark, #9a3412);
+
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 24px 20px;
+  background: var(--card, #fff);
+  border: 1.5px solid var(--line, #f2e3d2);
+  border-radius: 22px;
+  padding: 28px 22px;
+  box-shadow: 0 1px 2px rgba(120, 53, 15, 0.06), 0 10px 28px rgba(120, 53, 15, 0.1);
 }
 
 .title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 600;
+  line-height: 1.25;
 }
 
 .sub {
   margin: 0 0 12px;
-  color: var(--muted);
+  color: var(--muted, #6b5d52);
 }
 
 .label {
-  font-size: 0.9rem;
-  font-weight: 500;
   margin-top: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .input {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  background: var(--bg);
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px solid #e3cdb6;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink, #33261c);
+  font-size: 1rem;
+}
+
+.input::placeholder {
+  color: #8a7667;
 }
 
 .input:focus-visible {
-  outline: 3px solid var(--mine);
+  outline: 3px solid #1d4ed8;
   outline-offset: 1px;
 }
 
 .primary,
 .secondary {
-  padding: 13px 16px;
-  border-radius: 10px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 12px;
   font-weight: 600;
-  border: 2px solid var(--free);
+  border: 1.5px solid var(--au-brand);
 }
 
 .primary {
   margin-top: 12px;
-  background: var(--free);
+  background: var(--au-brand);
   color: #fff;
 }
 
 .secondary {
-  background: transparent;
-  color: var(--free);
+  background: #fff;
+  color: var(--au-brand-dark);
+}
+
+@media (hover: hover) {
+  .primary:hover:not(:disabled) {
+    background: var(--au-brand-dark);
+  }
+  .secondary:hover:not(:disabled) {
+    background: var(--brand-soft, #ffedd5);
+  }
 }
 
 .primary:disabled,
 .secondary:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .primary:focus-visible,
 .secondary:focus-visible {
-  outline: 3px solid var(--mine);
+  outline: 3px solid #1d4ed8;
   outline-offset: 2px;
 }
 
 .msg {
   margin: 4px 0 0;
   padding: 10px 12px;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  border-radius: 12px;
+  border: 1.5px solid;
+  font-size: 0.95rem;
 }
 
 .error {
-  background: var(--taken-soft);
-  color: var(--taken);
+  background: #fef2f2;
+  border-color: #f3a5a5;
+  color: #991b1b;
 }
 
 .ok {
-  background: var(--free-soft);
-  color: var(--free);
+  background: #f0fdf4;
+  border-color: #86d9a0;
+  color: #166534;
 }
