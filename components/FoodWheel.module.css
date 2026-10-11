@@ -1,0 +1,220 @@
+/* วงล้อสุ่มเมนู : สีทั้งหมดกำหนดไว้ในไฟล์นี้เอง ไม่ยุ่งกับสีของหน้าอื่น */
+.card {
+  --fw-surface: #ffffff;
+  --fw-line: #f2e3d2;
+  --fw-radius: 20px;
+  --fw-shadow: 0 8px 24px rgba(150, 70, 10, 0.08);
+  --fw-ink: #33261c;
+  --fw-muted: #6b5d52;
+  --fw-brand: #d9560b;
+  --fw-brand-hover: #bf4807;
+  --fw-accent-ink: #b24a05;
+  --fw-accent-soft: #ffe9d6;
+  padding: 18px 18px 20px;
+  background: var(--fw-surface);
+  border: 1.5px solid var(--fw-line);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow);
+  color: var(--fw-ink);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.sub {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--fw-muted);
+}
+
+.toggle {
+  min-height: 42px;
+  padding: 8px 18px;
+  border: 1.5px solid var(--fw-brand);
+  background: transparent;
+  color: var(--fw-brand);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggle:hover {
+  background: var(--fw-brand);
+  color: #ffffff;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 15px;
+  color: var(--fw-muted);
+  text-align: center;
+}
+
+.scope {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.scopeBtn {
+  min-height: 42px;
+  padding: 8px 18px;
+  border: 1.5px solid var(--fw-line);
+  background: var(--fw-surface);
+  color: var(--fw-ink);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.scopeBtn.on {
+  background: var(--fw-brand);
+  border-color: var(--fw-brand);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.scopeBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== ตัววงล้อ ===== */
+.wheelWrap {
+  position: relative;
+  width: min(320px, 100%);
+  margin-top: 6px;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(150, 70, 10, 0.18));
+}
+
+.pointer {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 28px solid var(--fw-brand);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+}
+
+.spin {
+  min-height: 52px;
+  min-width: 200px;
+  padding: 12px 32px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fw-brand);
+  color: #ffffff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.spin:hover:not(:disabled) {
+  background: var(--fw-brand-hover);
+}
+
+.spin:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.spin:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fw-accent-ink);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ===== ผลที่สุ่มได้ ===== */
+.result {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--fw-accent-soft);
+  text-align: center;
+}
+
+.result p {
+  margin: 0;
+}
+
+.resultLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fw-accent-ink);
+}
+
+.resultName {
+  margin-top: 4px !important;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.resultMeta {
+  margin-top: 2px !important;
+  font-size: 15px;
+  color: var(--fw-muted);
+}
+
+.go {
+  min-height: 48px;
+  margin-top: 12px;
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fw-brand);
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.go:hover {
+  background: var(--fw-brand-hover);
+}
