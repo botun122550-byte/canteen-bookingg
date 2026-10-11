@@ -1,208 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+/* ===== โทนคาเฟ่อุ่น ๆ : ครีม + น้ำตาลเอสเปรสโซ + คาราเมล ===== */
 .shell {
-  --bg: #edf1ef;
-  --card: #fbfcfb;
-  --ink: #17242b;
-  --muted: #5b6b73;
-  --line: #cbd5d1;
+  --bg: #faf6f0;
+  --surface: #fffdf9;
+  --ink: #3b2f2a;
+  --muted: #8a7a6e;
+  --line: #eadfd2;
+  --brand: #5c3d2e;
+  --brand-hover: #4a3125;
+  --brand-ink: #fffaf3;
+  --accent: #c58a4b;
+  --accent-soft: #f6e8d6;
+  --price: #8a5a2b;
+  --ok: #2f6b3a;
+  --danger: #a63d2f;
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(60, 40, 25, 0.05), 0 8px 24px rgba(60, 40, 25, 0.06);
 
-  --free: #0e7c6b;
-  --free-soft: #d5eee8;
-  --taken: #c8283c;
-  --taken-soft: #f6d9dd;
-  --pick: #a87900;
-  --pick-soft: #ffefb8;
-  --mine: #2c57d6;
-  --mine-soft: #dce5fb;
-
-  min-height: 100dvh;
+  min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
+  font-family: 'Noto Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  .shell {
-    --bg: #0f1719;
-    --card: #172226;
-    --ink: #e8efec;
-    --muted: #98a9b0;
-    --line: #2a3a40;
-
-    --free: #3fc7ae;
-    --free-soft: #12332d;
-    --taken: #ff6b7d;
-    --taken-soft: #3a1c22;
-    --pick: #f0b400;
-    --pick-soft: #3a2f08;
-    --mine: #7da0ff;
-    --mine-soft: #1b2a52;
-  }
+.shell *,
+.shell *::before,
+.shell *::after {
+  box-sizing: border-box;
 }
 
+.shell button:focus-visible,
+.shell a:focus-visible,
+.shell input:focus-visible,
+.shell select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===== โครงหน้า ===== */
 .page {
-  max-width: 720px;
+  max-width: 560px;
   margin: 0 auto;
-  padding: 16px 16px 140px;
-  padding-top: max(16px, env(safe-area-inset-top));
-}
-
-.wide {
-  max-width: 1040px;
+  padding: 28px 18px 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
 .loading {
-  padding: 48px 16px;
+  padding: 64px 16px;
   text-align: center;
   color: var(--muted);
 }
 
-/* ส่วนหัว */
 .top {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
 }
 
 .title {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .sub {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
+  font-size: 14px;
   color: var(--muted);
-  font-size: 0.95rem;
 }
 
 .nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .ghost {
-  display: inline-block;
-  background: transparent;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
   text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ghost:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 .h2 {
-  margin: 24px 0 10px;
-  font-size: 1.1rem;
+  margin: 0 0 12px;
+  font-size: 15px;
   font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 .hint {
-  margin: 8px 0 16px;
-  padding: 12px 14px;
-  border: 1.5px dashed var(--line);
-  border-radius: 12px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-/* ข้อความแจ้งผล */
-.notice {
   margin: 8px 0;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 14px;
+  color: var(--muted);
 }
 
-.error {
-  background: var(--taken-soft);
-  color: var(--taken);
+/* ===== แจ้งเตือน ===== */
+.notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid transparent;
 }
 
 .ok {
-  background: var(--free-soft);
-  color: var(--free);
+  background: #e8f2e4;
+  color: var(--ok);
+  border-color: #cfe4c8;
 }
 
-.info {
-  background: var(--mine-soft);
-  color: var(--mine);
+.error {
+  background: #f9e4e0;
+  color: var(--danger);
+  border-color: #efc7bf;
 }
 
-/* ตัวเลือกร้าน */
+/* ===== เลือกร้าน ===== */
 .chips {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  scrollbar-width: none;
-}
-
-.chips::-webkit-scrollbar {
-  display: none;
 }
 
 .chip {
-  flex: none;
-  padding: 10px 16px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
+  padding: 9px 18px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
   border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.chip:hover {
+  border-color: var(--accent);
 }
 
 .chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-ink);
 }
 
-.chip:disabled {
-  opacity: 0.5;
-}
-
-/* เมนู */
+/* ===== รายการเมนู / ตะกร้า ===== */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  gap: 10px;
 }
 
-.item {
+.item,
+.cartLine {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding: 12px 14px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
-.item.soldOut {
+.soldOut {
   opacity: 0.55;
 }
 
 .itemName {
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .price {
-  font-size: 0.9rem;
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--price);
+}
+
+.itemHint {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.cartOpts {
+  font-size: 13px;
   color: var(--muted);
 }
 
+.gone {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.addBtn {
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.addBtn:hover:not(:disabled) {
+  background: var(--brand-hover);
+}
+
+.addBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ===== ปุ่มเพิ่ม/ลดจำนวน ===== */
 .stepper {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
+  padding: 2px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.stepper button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper button:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .stepper span {
@@ -211,515 +284,273 @@
   font-weight: 600;
 }
 
-.stepper button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1.5px solid var(--line);
-  background: var(--bg);
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.stepper button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-/* ฟอร์ม */
+/* ===== ฟอร์ม ===== */
 .field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .label {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
 }
 
-.input,
-.select {
+.select,
+.input {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  background: var(--card);
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
 }
 
-/* แถบสรุปด้านล่าง */
+.select:focus,
+.input:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-soft);
+}
+
+/* ===== ออเดอร์ของฉัน ===== */
+.orders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.order {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.orderHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pill {
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sNew {
+  background: #fdf0d5;
+  color: #8a5a12;
+}
+
+.sCooking {
+  background: #fde4d3;
+  color: #a4421a;
+}
+
+.sReady {
+  background: #dcefd9;
+  color: #2f6b3a;
+}
+
+.sDone {
+  background: #ece7e1;
+  color: #6b5f55;
+}
+
+.sCancel {
+  background: #f6dcdc;
+  color: #9b2c2c;
+}
+
+.orderMeta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.lines li::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.note {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--accent-soft);
+  color: #7a4f22;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.orderFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.danger {
+  padding: 6px 14px;
+  border: 1px solid #e2b4ab;
+  background: transparent;
+  color: var(--danger);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.danger:hover {
+  background: #f9e4e0;
+}
+
+/* ===== แถบสรุปยอดด้านล่าง ===== */
 .bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--card);
-  border-top: 1.5px solid var(--line);
-  padding: 12px 16px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 20;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(255, 253, 249, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
 }
 
 .barInner {
-  max-width: 720px;
+  max-width: 560px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .barSub {
-  font-size: 0.85rem;
+  font-size: 12px;
   color: var(--muted);
 }
 
 .confirm {
-  padding: 13px 18px;
-  background: var(--free);
-  color: #fff;
+  padding: 12px 24px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font: inherit;
+  font-size: 15px;
   font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.confirm:hover:not(:disabled) {
+  background: var(--brand-hover);
 }
 
 .confirm:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-/* การ์ดออเดอร์ */
-.orders {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.order {
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
-}
-
-.orderHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.orderMeta {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.lines {
-  margin: 6px 0;
-  padding-left: 18px;
-}
-
-.note {
-  margin: 6px 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--pick-soft);
-  font-size: 0.9rem;
-}
-
-.orderFoot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.pill {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  background: var(--c-soft);
-  color: var(--c);
-  border: 1.5px solid var(--c);
-}
-
-.sNew {
-  --c: var(--mine);
-  --c-soft: var(--mine-soft);
-}
-
-.sCooking {
-  --c: var(--pick);
-  --c-soft: var(--pick-soft);
-}
-
-.sReady {
-  --c: var(--free);
-  --c-soft: var(--free-soft);
-}
-
-.sDone {
-  --c: var(--muted);
-  --c-soft: var(--bg);
-}
-
-.sCancel {
-  --c: var(--taken);
-  --c-soft: var(--taken-soft);
-}
-
-/* หน้าร้านค้า */
-.board {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-@media (min-width: 900px) {
-  .board {
-    grid-template-columns: repeat(3, 1fr);
-    align-items: start;
-  }
-}
-
-.col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.colTitle {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.empty {
-  padding: 16px;
-  border: 1.5px dashed var(--line);
-  border-radius: 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.primary {
-  padding: 10px 16px;
-  background: var(--free);
-  color: #fff;
-  border: 0;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.danger {
-  padding: 10px 14px;
-  background: transparent;
-  color: var(--taken);
-  border: 1.5px solid var(--taken);
-  border-radius: 10px;
-}
-
-.toggleRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-.addForm {
-  display: grid;
-  grid-template-columns: 1fr 100px auto;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-/* โฟกัสด้วยคีย์บอร์ด */
-.chip:focus-visible,
-.ghost:focus-visible,
-.confirm:focus-visible,
-.primary:focus-visible,
-.danger:focus-visible,
-.stepper button:focus-visible,
-.input:focus-visible,
-.select:focus-visible {
-  outline: 3px solid var(--mine);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shell,
-  .shell * {
-    transition: none !important;
-  }
-}
-
-/* ===== เฟส 3: ตัวเลือกเสริมในเมนู ===== */
-.itemHint {
-  font-size: 0.8rem;
-  color: var(--mine);
-}
-
-.addBtn {
-  padding: 10px 18px;
-  background: var(--free);
-  color: #fff;
-  border: 0;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.addBtn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
-.cartLine {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-}
-
-.cartOpts {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.gone {
-  font-size: 0.85rem;
-  color: var(--taken);
-  font-weight: 600;
-}
-
-/* หน้าต่างเลือกตัวเลือก (แถบเลื่อนขึ้นจากด้านล่างบนมือถือ) */
+/* ===== หน้าต่างเลือกตัวเลือกเสริม ===== */
 .dialog {
-  width: 100%;
-  max-width: 480px;
-  max-height: 85dvh;
-  margin: auto auto 0;
+  width: min(480px, calc(100% - 24px));
+  max-width: none;
+  margin: auto;
   padding: 0;
   border: 0;
-  border-radius: 20px 20px 0 0;
-  background: var(--card);
+  border-radius: 22px;
+  background: var(--surface);
   color: var(--ink);
-  overflow: auto;
+  box-shadow: 0 24px 60px rgba(60, 40, 25, 0.25);
 }
 
 .dialog::backdrop {
-  background: rgba(10, 20, 24, 0.55);
-}
-
-@media (min-width: 600px) {
-  .dialog {
-    margin: auto;
-    border-radius: 20px;
-  }
+  background: rgba(59, 47, 42, 0.45);
+  backdrop-filter: blur(2px);
 }
 
 .sheet {
-  padding: 20px 18px calc(18px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 14px;
+  padding: 22px 22px 18px;
 }
 
 .sheetTitle {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .fieldset {
-  margin: 14px 0;
-  padding: 0;
-  border: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.fieldset legend {
-  padding: 0;
-  margin-bottom: 6px;
+  margin: 0;
+  padding: 10px 14px 12px;
+  min-inline-size: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: grid;
+  gap: 2px;
 }
 
 .check {
   display: grid;
-  grid-template-columns: 24px 1fr auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  background: var(--bg);
+  padding: 10px 2px;
+  cursor: pointer;
+}
+
+.check + .check {
+  border-top: 1px solid var(--line);
 }
 
 .check input {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--free);
-}
-
-.check:has(input:checked) {
-  border-color: var(--free);
-  background: var(--free-soft);
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
 }
 
 .sheetQty {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 12px 0 16px;
+  justify-content: space-between;
 }
 
 .sheetActions {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
   gap: 10px;
+  margin-top: 4px;
 }
 
-/* จัดการเมนูและตัวเลือกในหน้าร้านค้า */
-.itemBlock {
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
-}
-
-.itemRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.itemBlock.soldOut {
-  opacity: 0.7;
-}
-
-.opts {
-  margin-top: 10px;
-}
-
-.opts summary {
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--mine);
-  padding: 4px 0;
-}
-
-.optList {
-  list-style: none;
-  margin: 8px 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.optRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: var(--bg);
-  border-radius: 10px;
-  font-size: 0.9rem;
-}
-
-.optBtns {
-  display: flex;
-  gap: 6px;
-}
-
-.optForm {
-  display: grid;
-  grid-template-columns: 1fr 90px auto;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.sheetActions button:focus-visible,
-.addBtn:focus-visible,
-.check input:focus-visible,
-.opts summary:focus-visible {
-  outline: 3px solid var(--mine);
-  outline-offset: 2px;
-}
-
-/* ===== เฟส 4: หน้าแรกและการผูกบัญชีร้านค้า ===== */
-.group {
-  margin-top: 24px;
-}
-
-.groupTitle {
-  margin: 0 0 4px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.groupSub {
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.entries {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.entry {
-  display: block;
-  padding: 16px 16px 16px 20px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-left: 8px solid var(--free);
-  border-radius: 14px;
-  color: inherit;
-  text-decoration: none;
-}
-
-.entryVendor {
-  border-left-color: var(--mine);
-}
-
-.entryTitle {
-  display: block;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.entryText {
-  display: block;
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.entry:focus-visible {
-  outline: 3px solid var(--mine);
-  outline-offset: 2px;
-}
-
-.claimForm {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
+.sheetActions .confirm {
+  flex: 1;
 }
