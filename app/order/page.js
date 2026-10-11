@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
 import AuthBox from '../../components/AuthBox'
 import TelegramLink from '../../components/TelegramLink'
+import FoodWheel from '../../components/FoodWheel'
 import PaymentBox from '../../components/PaymentBox'
 import ReviewBox from '../../components/ReviewBox'
 import styles from './order.module.css'
@@ -300,7 +301,17 @@ export default function OrderPage() {
         .filter((o) => draftOpts.includes(o.id))
         .reduce((sum, o) => sum + Number(o.extra_price), 0)
     : 0
-
+  // กด "ไปสั่งเลย" จากวงล้อ: เลือกร้านนั้น แล้วเลื่อนไปที่เมนู
+  function pickFromWheel(id) {
+    if (id !== shopId) {
+      setShopId(id)
+      setCart([])
+      setNotice(null)
+    }
+    setTimeout(() => {
+      document.getElementById('h-menu')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 300)
+  }
   async function placeOrder() {
     if (!cartLines.length || !shopOpen || hasUnavailable) return
     setSaving(true)
@@ -383,7 +394,7 @@ export default function OrderPage() {
         )}
 
         <TelegramLink userId={user.id} audience="student" />
-
+        <FoodWheel shops={shops} shopId={shopId} onPick={pickFromWheel} />
         <section aria-labelledby="h-shop">
           <h2 id="h-shop" className={styles.h2}>เลือกร้าน</h2>
           {shops.length === 0 && <p className={styles.hint}>ยังไม่มีร้านในระบบ</p>}
