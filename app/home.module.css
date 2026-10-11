@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+/* ===== หน้าแรก : สดใส เป็นมิตร (ส้ม + เหลือง + มิ้นต์ บนพื้นครีม) ===== */
+.shell {
+  --bg: #fff8f1;
+  --surface: #ffffff;
+  --ink: #33261c;
+  --muted: #6b5d52;
+  --line: #f2e3d2;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell *,
+.shell *::before,
+.shell *::after {
+  box-sizing: border-box;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 18px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ===== ส่วนหัว (banner สีส้ม) ===== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 36px 24px 32px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ee6a14 0%, #ff8a1f 55%, #ffa42b 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgba(238, 106, 20, 0.28);
+}
+
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+}
+
+.hero::before {
+  width: 220px;
+  height: 220px;
+  top: -90px;
+  right: -60px;
+}
+
+.hero::after {
+  width: 140px;
+  height: 140px;
+  bottom: -60px;
+  left: -40px;
+}
+
+.float {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.95;
+  filter: drop-shadow(0 4px 6px rgba(120, 50, 0, 0.25));
+  pointer-events: none;
+  user-select: none;
+}
+
+.f1 {
+  top: 18px;
+  right: 22px;
+  transform: rotate(12deg);
+}
+
+.f2 {
+  top: 78px;
+  right: 82px;
+  font-size: 30px;
+  transform: rotate(-10deg);
+}
+
+.f3 {
+  bottom: 16px;
+  right: 30px;
+  font-size: 34px;
+  transform: rotate(-6deg);
+}
+
+.eyebrow {
+  position: relative;
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.title {
+  position: relative;
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px rgba(120, 50, 0, 0.25);
+}
+
+.sub {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: 14px 0 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ===== 3 ขั้นตอน ===== */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 8px 12px;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.stepNum {
+  position: absolute;
+  top: -10px;
+  left: -6px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f26b1d;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(242, 107, 29, 0.4);
+}
+
+.stepIcon {
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.stepLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ===== หัวข้อ ===== */
+.h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.h2::before {
+  content: '';
+  width: 6px;
+  height: 22px;
+  border-radius: 3px;
+  background: #f26b1d;
+}
+
+.hint {
+  margin: 4px 0 14px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* ===== การ์ดเมนู ===== */
+.cards {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  --tone-bg: #ffe9d6;
+  --tone-strong: #f26b1d;
+  --tone-ink: #b24a05;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 96px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 1px 2px rgba(150, 70, 10, 0.06), 0 8px 24px rgba(150, 70, 10, 0.08);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--tone-strong);
+  box-shadow: 0 2px 4px rgba(150, 70, 10, 0.08), 0 16px 34px rgba(150, 70, 10, 0.16);
+}
+
+.card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.card:focus-visible {
+  outline: 3px solid var(--tone-strong);
+  outline-offset: 3px;
+}
+
+.toneOrange {
+  --tone-bg: #ffe9d6;
+  --tone-strong: #f26b1d;
+  --tone-ink: #b24a05;
+}
+
+.toneYellow {
+  --tone-bg: #fff1bf;
+  --tone-strong: #f5a50b;
+  --tone-ink: #8a5a00;
+}
+
+.toneMint {
+  --tone-bg: #d9f5e6;
+  --tone-strong: #2fb67c;
+  --tone-ink: #14694a;
+}
+
+.icon {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--tone-bg);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.cardBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cardText {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.arrow {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  font-size: 28px;
+  line-height: 1;
+  padding-bottom: 3px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.card:hover .arrow {
+  background: var(--tone-strong);
+  color: #ffffff;
+}
+
+@media (max-width: 380px) {
+  .title {
+    font-size: 34px;
+  }
+
+  .icon {
+    width: 54px;
+    height: 54px;
+    font-size: 28px;
+  }
+
+  .float {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .arrow {
+    transition: none;
+  }
+
+  .card:hover,
+  .card:active {
+    transform: none;
+  }
+}
