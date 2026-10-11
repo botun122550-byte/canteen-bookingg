@@ -1,27 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
 
-/* ===== โทนคาเฟ่อุ่น ๆ : ครีม + น้ำตาลเอสเปรสโซ + คาราเมล ===== */
+/* ===== โทนส้ม + ขาวครีม สดใส เหมาะกับนักศึกษา (อ่านง่าย กดง่าย) ===== */
 .shell {
-  --bg: #faf6f0;
-  --surface: #fffdf9;
-  --ink: #3b2f2a;
-  --muted: #8a7a6e;
-  --line: #eadfd2;
-  --brand: #5c3d2e;
-  --brand-hover: #4a3125;
-  --brand-ink: #fffaf3;
-  --accent: #c58a4b;
-  --accent-soft: #f6e8d6;
-  --price: #8a5a2b;
-  --ok: #2f6b3a;
-  --danger: #a63d2f;
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(60, 40, 25, 0.05), 0 8px 24px rgba(60, 40, 25, 0.06);
+  --bg: #fff8f1;
+  --surface: #ffffff;
+  --ink: #33261c;
+  --muted: #6b5d52;
+  --line: #f2e3d2;
+  --brand: #d9560b;
+  --brand-hover: #bf4807;
+  --brand-ink: #ffffff;
+  --accent: #ff8a3d;
+  --accent-ink: #b24a05;
+  --accent-soft: #ffe9d6;
+  --price: #c2480a;
+  --ok: #2f7d3a;
+  --danger: #c03a2b;
+  --radius: 20px;
+  --shadow: 0 1px 2px rgba(150, 70, 10, 0.06), 0 8px 24px rgba(150, 70, 10, 0.08);
 
   min-height: 100vh;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: radial-gradient(900px 320px at 50% -140px, #ffe1c8 0%, rgba(255, 248, 241, 0) 70%);
+  background-repeat: no-repeat;
   color: var(--ink);
   font-family: 'Noto Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -36,18 +40,18 @@
 .shell a:focus-visible,
 .shell input:focus-visible,
 .shell select:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
 /* ===== โครงหน้า ===== */
 .page {
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 28px 18px 130px;
+  padding: 28px 18px 140px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
 }
 
 .loading {
@@ -65,14 +69,14 @@
 
 .title {
   margin: 0;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .sub {
   margin: 4px 0 0;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--muted);
 }
 
@@ -87,13 +91,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  border: 1px solid var(--line);
+  min-height: 42px;
+  padding: 8px 18px;
+  border: 1.5px solid var(--line);
   background: var(--surface);
   color: var(--ink);
   border-radius: 999px;
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -104,26 +110,37 @@
   border-color: var(--accent);
 }
 
+/* หัวข้อแต่ละส่วน */
 .h2 {
-  margin: 0 0 12px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.h2::before {
+  content: '';
+  width: 5px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--accent);
 }
 
 .hint {
-  margin: 8px 0;
-  font-size: 14px;
+  margin: 8px 0 12px;
+  font-size: 15px;
   color: var(--muted);
 }
 
 /* ===== แจ้งเตือน ===== */
 .notice {
   margin: 0;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 15px;
   border: 1px solid transparent;
 }
 
@@ -143,17 +160,19 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .chip {
-  padding: 9px 18px;
-  border: 1px solid var(--line);
+  min-height: 48px;
+  padding: 12px 22px;
+  border: 1.5px solid var(--line);
   background: var(--surface);
   color: var(--ink);
   border-radius: 999px;
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
@@ -166,6 +185,15 @@
   background: var(--brand);
   border-color: var(--brand);
   color: var(--brand-ink);
+  font-weight: 600;
+}
+
+.chip.on::before {
+  content: '✓ ';
+}
+
+.chip.closed {
+  opacity: 0.55;
 }
 
 /* ===== รายการเมนู / ตะกร้า ===== */
@@ -174,7 +202,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .item,
@@ -182,10 +210,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 14px;
+  min-height: 80px;
+  padding: 16px 18px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
@@ -195,50 +224,74 @@
 }
 
 .itemName {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1.35;
 }
 
 .price {
-  margin-top: 2px;
-  font-size: 14px;
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--price);
+}
+
+.field .price {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
 }
 
 .itemHint {
   margin-top: 2px;
-  font-size: 12px;
-  color: var(--accent);
+  font-size: 13px;
+  color: var(--accent-ink);
+}
+
+.inCart {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: #8f3a05;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .cartOpts {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 
 .gone {
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--danger);
 }
 
 .addBtn {
-  padding: 8px 20px;
+  min-width: 88px;
+  min-height: 46px;
+  padding: 10px 22px;
   border: 0;
   border-radius: 999px;
   background: var(--brand);
   color: var(--brand-ink);
   font: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
 }
 
 .addBtn:hover:not(:disabled) {
   background: var(--brand-hover);
+}
+
+.addBtn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .addBtn:disabled {
@@ -251,20 +304,20 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px;
+  padding: 3px;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 999px;
 }
 
 .stepper button {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border: 0;
   border-radius: 50%;
   background: var(--surface);
   color: var(--ink);
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
 }
@@ -279,41 +332,43 @@
 }
 
 .stepper span {
-  min-width: 28px;
+  min-width: 32px;
   text-align: center;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
 }
 
 /* ===== ฟอร์ม ===== */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .label {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--ink);
 }
 
 .select,
 .input {
   width: 100%;
-  padding: 11px 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  min-height: 50px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
   background: var(--surface);
   color: var(--ink);
   font: inherit;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .select:focus,
 .input:focus {
   border-color: var(--accent);
-  outline: 2px solid var(--accent-soft);
+  outline: 3px solid var(--accent-soft);
 }
 
 /* ===== ออเดอร์ของฉัน ===== */
@@ -322,15 +377,15 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .order {
   display: grid;
-  gap: 8px;
-  padding: 16px 18px;
+  gap: 10px;
+  padding: 18px 20px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
@@ -340,34 +395,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  font-size: 17px;
 }
 
 .pill {
-  padding: 3px 12px;
+  padding: 4px 14px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .sNew {
-  background: #fdf0d5;
-  color: #8a5a12;
+  background: #fff0cc;
+  color: #8a5a00;
 }
 
 .sCooking {
-  background: #fde4d3;
-  color: #a4421a;
+  background: #ffe0c7;
+  color: #b34a08;
 }
 
 .sReady {
-  background: #dcefd9;
-  color: #2f6b3a;
+  background: #d9f2dc;
+  color: #1f7a33;
 }
 
 .sDone {
   background: #ece7e1;
-  color: #6b5f55;
+  color: #5f544b;
 }
 
 .sCancel {
@@ -376,7 +432,7 @@
 }
 
 .orderMeta {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -385,8 +441,8 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 2px;
-  font-size: 14px;
+  gap: 3px;
+  font-size: 15px;
 }
 
 .lines li::before {
@@ -398,11 +454,11 @@
 
 .note {
   margin: 0;
-  padding: 8px 12px;
+  padding: 10px 14px;
   background: var(--accent-soft);
-  color: #7a4f22;
-  border-radius: 10px;
-  font-size: 13px;
+  color: #8f3a05;
+  border-radius: 12px;
+  font-size: 14px;
 }
 
 .orderFoot {
@@ -410,18 +466,21 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 4px;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid var(--line);
+  font-size: 17px;
 }
 
 .danger {
-  padding: 6px 14px;
-  border: 1px solid #e2b4ab;
+  min-height: 40px;
+  padding: 8px 18px;
+  border: 1.5px solid #e2b4ab;
   background: transparent;
   color: var(--danger);
   border-radius: 999px;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -438,14 +497,14 @@
   bottom: 0;
   z-index: 20;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(255, 253, 249, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid var(--line);
+  border-top: 1.5px solid var(--line);
 }
 
 .barInner {
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -453,26 +512,36 @@
   gap: 16px;
 }
 
+.barInner strong {
+  font-size: 22px;
+  color: var(--brand);
+}
+
 .barSub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 
 .confirm {
-  padding: 12px 24px;
+  min-height: 50px;
+  padding: 12px 30px;
   border: 0;
   border-radius: 999px;
   background: var(--brand);
   color: var(--brand-ink);
   font: inherit;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s;
 }
 
 .confirm:hover:not(:disabled) {
   background: var(--brand-hover);
+}
+
+.confirm:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .confirm:disabled {
@@ -482,60 +551,64 @@
 
 /* ===== หน้าต่างเลือกตัวเลือกเสริม ===== */
 .dialog {
-  width: min(480px, calc(100% - 24px));
+  width: min(500px, calc(100% - 24px));
   max-width: none;
   margin: auto;
   padding: 0;
   border: 0;
-  border-radius: 22px;
+  border-radius: 24px;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 24px 60px rgba(60, 40, 25, 0.25);
+  box-shadow: 0 24px 60px rgba(150, 70, 10, 0.28);
 }
 
 .dialog::backdrop {
-  background: rgba(59, 47, 42, 0.45);
+  background: rgba(51, 38, 28, 0.45);
   backdrop-filter: blur(2px);
 }
 
 .sheet {
   display: grid;
-  gap: 14px;
-  padding: 22px 22px 18px;
+  gap: 16px;
+  padding: 24px 22px 20px;
 }
 
 .sheetTitle {
   margin: 0;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 .fieldset {
   margin: 0;
-  padding: 10px 14px 12px;
+  padding: 10px 12px 12px;
   min-inline-size: 0;
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
   display: grid;
   gap: 2px;
 }
 
+/* แถวตัวเลือก: แตะได้ทั้งแถว แถวที่เลือกแล้วเป็นสีคาราเมล */
 .check {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 10px;
-  padding: 10px 2px;
+  gap: 12px;
+  min-height: 54px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.check + .check {
-  border-top: 1px solid var(--line);
+.check:has(input:checked) {
+  background: var(--accent-soft);
 }
 
 .check input {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   accent-color: var(--brand);
 }
 
