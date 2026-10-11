@@ -1,329 +1,224 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
-
-/* ===== โทนส้ม + ขาวครีม สดใส เหมาะกับนักศึกษา (อ่านง่าย กดง่าย) ===== */
 .shell {
-  --bg: #fff8f1;
-  --surface: #ffffff;
-  --ink: #33261c;
-  --muted: #6b5d52;
-  --line: #f2e3d2;
-  --brand: #d9560b;
-  --brand-hover: #bf4807;
-  --brand-ink: #ffffff;
-  --accent: #ff8a3d;
-  --accent-ink: #b24a05;
-  --accent-soft: #ffe9d6;
-  --price: #c2480a;
-  --ok: #2f7d3a;
-  --danger: #c03a2b;
-  --radius: 20px;
-  --shadow: 0 1px 2px rgba(150, 70, 10, 0.06), 0 8px 24px rgba(150, 70, 10, 0.08);
+  --bg: #edf1ef;
+  --card: #fbfcfb;
+  --ink: #17242b;
+  --muted: #5b6b73;
+  --line: #cbd5d1;
 
-  min-height: 100vh;
-  background-color: var(--bg);
-  background-image: radial-gradient(900px 320px at 50% -140px, #ffe1c8 0%, rgba(255, 248, 241, 0) 70%);
-  background-repeat: no-repeat;
+  --free: #0e7c6b;
+  --free-soft: #d5eee8;
+  --taken: #c8283c;
+  --taken-soft: #f6d9dd;
+  --pick: #a87900;
+  --pick-soft: #ffefb8;
+  --mine: #2c57d6;
+  --mine-soft: #dce5fb;
+
+  min-height: 100dvh;
+  background: var(--bg);
   color: var(--ink);
-  font-family: 'Noto Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
 }
 
-.shell *,
-.shell *::before,
-.shell *::after {
-  box-sizing: border-box;
+@media (prefers-color-scheme: dark) {
+  .shell {
+    --bg: #0f1719;
+    --card: #172226;
+    --ink: #e8efec;
+    --muted: #98a9b0;
+    --line: #2a3a40;
+
+    --free: #3fc7ae;
+    --free-soft: #12332d;
+    --taken: #ff6b7d;
+    --taken-soft: #3a1c22;
+    --pick: #f0b400;
+    --pick-soft: #3a2f08;
+    --mine: #7da0ff;
+    --mine-soft: #1b2a52;
+  }
 }
 
-.shell button:focus-visible,
-.shell a:focus-visible,
-.shell input:focus-visible,
-.shell select:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* ===== โครงหน้า ===== */
 .page {
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 28px 18px 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  padding: 16px 16px 140px;
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+.wide {
+  max-width: 1040px;
 }
 
 .loading {
-  padding: 64px 16px;
+  padding: 48px 16px;
   text-align: center;
   color: var(--muted);
 }
 
+/* ส่วนหัว */
 .top {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .title {
   margin: 0;
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .sub {
-  margin: 4px 0 0;
-  font-size: 15px;
+  margin: 2px 0 0;
   color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
   justify-content: flex-end;
+  gap: 8px;
 }
 
 .ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 8px 18px;
+  display: inline-block;
+  background: transparent;
   border: 1.5px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
-  border-radius: 999px;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 500;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  color: inherit;
   text-decoration: none;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
 }
 
-.ghost:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-}
-
-/* หัวข้อแต่ละส่วน */
 .h2 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 14px;
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.h2::before {
-  content: '';
-  width: 5px;
-  height: 20px;
-  border-radius: 3px;
-  background: var(--accent);
-}
-
-.hint {
-  margin: 8px 0 12px;
-  font-size: 15px;
-  color: var(--muted);
-}
-
-/* ===== แจ้งเตือน ===== */
-.notice {
-  margin: 0;
-  padding: 14px 18px;
-  border-radius: 14px;
-  font-size: 15px;
-  border: 1px solid transparent;
-}
-
-.ok {
-  background: #e8f2e4;
-  color: var(--ok);
-  border-color: #cfe4c8;
-}
-
-.error {
-  background: #f9e4e0;
-  color: var(--danger);
-  border-color: #efc7bf;
-}
-
-/* ===== เลือกร้าน ===== */
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.chip {
-  min-height: 48px;
-  padding: 12px 22px;
-  border: 1.5px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
-  border-radius: 999px;
-  font: inherit;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.chip:hover {
-  border-color: var(--accent);
-}
-
-.chip.on {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: var(--brand-ink);
+  margin: 24px 0 10px;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
-.chip.on::before {
-  content: '✓ ';
+.hint {
+  margin: 8px 0 16px;
+  padding: 12px 14px;
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
-.chip.closed {
-  opacity: 0.55;
+/* ข้อความแจ้งผล */
+.notice {
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.95rem;
 }
 
-/* ===== รายการเมนู / ตะกร้า ===== */
+.error {
+  background: var(--taken-soft);
+  color: var(--taken);
+}
+
+.ok {
+  background: var(--free-soft);
+  color: var(--free);
+}
+
+.info {
+  background: var(--mine-soft);
+  color: var(--mine);
+}
+
+/* ตัวเลือกร้าน */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: none;
+  padding: 10px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+}
+
+.chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+}
+
+/* เมนู */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: 12px;
-}
-
-.item,
-.cartLine {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  min-height: 80px;
-  padding: 16px 18px;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  flex-direction: column;
+  gap: 8px;
 }
 
-.soldOut {
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+}
+
+.item.soldOut {
   opacity: 0.55;
 }
 
 .itemName {
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.35;
+  font-weight: 500;
 }
 
 .price {
-  margin-top: 4px;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--price);
-}
-
-.field .price {
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
-.itemHint {
-  margin-top: 2px;
-  font-size: 13px;
-  color: var(--accent-ink);
-}
-
-.inCart {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 2px 12px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: #8f3a05;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.cartOpts {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.gone {
-  margin-top: 4px;
-  font-size: 13px;
-  color: var(--danger);
-}
-
-.addBtn {
-  min-width: 88px;
-  min-height: 46px;
-  padding: 10px 22px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--brand);
-  color: var(--brand-ink);
-  font: inherit;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-  white-space: nowrap;
-}
-
-.addBtn:hover:not(:disabled) {
-  background: var(--brand-hover);
-}
-
-.addBtn:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.addBtn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-/* ===== ปุ่มเพิ่ม/ลดจำนวน ===== */
 .stepper {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 4px;
-  padding: 3px;
-  background: var(--bg);
-  border: 1.5px solid var(--line);
-  border-radius: 999px;
+}
+
+.stepper span {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 600;
 }
 
 .stepper button {
   width: 40px;
   height: 40px;
-  border: 0;
   border-radius: 50%;
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 22px;
+  border: 1.5px solid var(--line);
+  background: var(--bg);
+  font-size: 1.2rem;
   line-height: 1;
-  cursor: pointer;
-}
-
-.stepper button:hover:not(:disabled) {
-  background: var(--accent-soft);
 }
 
 .stepper button:disabled {
@@ -331,299 +226,500 @@
   cursor: not-allowed;
 }
 
-.stepper span {
-  min-width: 32px;
-  text-align: center;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-/* ===== ฟอร์ม ===== */
+/* ฟอร์ม */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .label {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.select,
-.input {
+.input,
+.select {
   width: 100%;
-  min-height: 50px;
-  padding: 12px 16px;
+  padding: 12px 14px;
   border: 1.5px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  color: var(--ink);
-  font: inherit;
-  font-size: 16px;
+  border-radius: 10px;
+  background: var(--card);
 }
 
-.select:focus,
-.input:focus {
-  border-color: var(--accent);
-  outline: 3px solid var(--accent-soft);
-}
-
-/* ===== ออเดอร์ของฉัน ===== */
-.orders {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.order {
-  display: grid;
-  gap: 10px;
-  padding: 18px 20px;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.orderHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 17px;
-}
-
-.pill {
-  padding: 4px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.sNew {
-  background: #fff0cc;
-  color: #8a5a00;
-}
-
-.sCooking {
-  background: #ffe0c7;
-  color: #b34a08;
-}
-
-.sReady {
-  background: #d9f2dc;
-  color: #1f7a33;
-}
-
-.sDone {
-  background: #ece7e1;
-  color: #5f544b;
-}
-
-.sCancel {
-  background: #f6dcdc;
-  color: #9b2c2c;
-}
-
-.orderMeta {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.lines {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 3px;
-  font-size: 15px;
-}
-
-.lines li::before {
-  content: '·';
-  margin-right: 8px;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.note {
-  margin: 0;
-  padding: 10px 14px;
-  background: var(--accent-soft);
-  color: #8f3a05;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.orderFoot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-  font-size: 17px;
-}
-
-.danger {
-  min-height: 40px;
-  padding: 8px 18px;
-  border: 1.5px solid #e2b4ab;
-  background: transparent;
-  color: var(--danger);
-  border-radius: 999px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.danger:hover {
-  background: #f9e4e0;
-}
-
-/* ===== แถบสรุปยอดด้านล่าง ===== */
+/* แถบสรุปด้านล่าง */
 .bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 20;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--card);
   border-top: 1.5px solid var(--line);
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
 
 .barInner {
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-}
-
-.barInner strong {
-  font-size: 22px;
-  color: var(--brand);
+  align-items: center;
+  gap: 12px;
 }
 
 .barSub {
-  font-size: 13px;
+  font-size: 0.85rem;
   color: var(--muted);
 }
 
 .confirm {
-  min-height: 50px;
-  padding: 12px 30px;
+  padding: 13px 18px;
+  background: var(--free);
+  color: #fff;
   border: 0;
-  border-radius: 999px;
-  background: var(--brand);
-  color: var(--brand-ink);
-  font: inherit;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-.confirm:hover:not(:disabled) {
-  background: var(--brand-hover);
-}
-
-.confirm:active:not(:disabled) {
-  transform: scale(0.97);
+  border-radius: 12px;
+  font-weight: 600;
 }
 
 .confirm:disabled {
-  opacity: 0.45;
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* การ์ดออเดอร์ */
+.orders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.orderHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.orderMeta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.lines {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.note {
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--pick-soft);
+  font-size: 0.9rem;
+}
+
+.orderFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--c-soft);
+  color: var(--c);
+  border: 1.5px solid var(--c);
+}
+
+.sNew {
+  --c: var(--mine);
+  --c-soft: var(--mine-soft);
+}
+
+.sCooking {
+  --c: var(--pick);
+  --c-soft: var(--pick-soft);
+}
+
+.sReady {
+  --c: var(--free);
+  --c-soft: var(--free-soft);
+}
+
+.sDone {
+  --c: var(--muted);
+  --c-soft: var(--bg);
+}
+
+.sCancel {
+  --c: var(--taken);
+  --c-soft: var(--taken-soft);
+}
+
+/* หน้าร้านค้า */
+.board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .board {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+  }
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.colTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.empty {
+  padding: 16px;
+  border: 1.5px dashed var(--line);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.primary {
+  padding: 10px 16px;
+  background: var(--free);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.danger {
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--taken);
+  border: 1.5px solid var(--taken);
+  border-radius: 10px;
+}
+
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.addForm {
+  display: grid;
+  grid-template-columns: 1fr 100px auto;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* โฟกัสด้วยคีย์บอร์ด */
+.chip:focus-visible,
+.ghost:focus-visible,
+.confirm:focus-visible,
+.primary:focus-visible,
+.danger:focus-visible,
+.stepper button:focus-visible,
+.input:focus-visible,
+.select:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell,
+  .shell * {
+    transition: none !important;
+  }
+}
+
+/* ===== เฟส 3: ตัวเลือกเสริมในเมนู ===== */
+.itemHint {
+  font-size: 0.8rem;
+  color: var(--mine);
+}
+
+.addBtn {
+  padding: 10px 18px;
+  background: var(--free);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.addBtn:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* ===== หน้าต่างเลือกตัวเลือกเสริม ===== */
+.cartLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+}
+
+.cartOpts {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.gone {
+  font-size: 0.85rem;
+  color: var(--taken);
+  font-weight: 600;
+}
+
+/* หน้าต่างเลือกตัวเลือก (แถบเลื่อนขึ้นจากด้านล่างบนมือถือ) */
 .dialog {
-  width: min(500px, calc(100% - 24px));
-  max-width: none;
-  margin: auto;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85dvh;
+  margin: auto auto 0;
   padding: 0;
   border: 0;
-  border-radius: 24px;
-  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  background: var(--card);
   color: var(--ink);
-  box-shadow: 0 24px 60px rgba(150, 70, 10, 0.28);
+  overflow: auto;
 }
 
 .dialog::backdrop {
-  background: rgba(51, 38, 28, 0.45);
-  backdrop-filter: blur(2px);
+  background: rgba(10, 20, 24, 0.55);
+}
+
+@media (min-width: 600px) {
+  .dialog {
+    margin: auto;
+    border-radius: 20px;
+  }
 }
 
 .sheet {
-  display: grid;
-  gap: 16px;
-  padding: 24px 22px 20px;
+  padding: 20px 18px calc(18px + env(safe-area-inset-bottom));
 }
 
 .sheetTitle {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .fieldset {
-  margin: 0;
-  padding: 10px 12px 12px;
-  min-inline-size: 0;
-  border: 1.5px solid var(--line);
-  border-radius: 16px;
-  display: grid;
-  gap: 2px;
+  margin: 14px 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* แถวตัวเลือก: แตะได้ทั้งแถว แถวที่เลือกแล้วเป็นสีคาราเมล */
+.fieldset legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
+
 .check {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 24px 1fr auto;
   align-items: center;
-  gap: 12px;
-  min-height: 54px;
-  padding: 10px 12px;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
   border-radius: 12px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.check:has(input:checked) {
-  background: var(--accent-soft);
+  background: var(--bg);
 }
 
 .check input {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--brand);
+  width: 20px;
+  height: 20px;
+  accent-color: var(--free);
+}
+
+.check:has(input:checked) {
+  border-color: var(--free);
+  background: var(--free-soft);
 }
 
 .sheetQty {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 16px;
 }
 
 .sheetActions {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   gap: 10px;
-  margin-top: 4px;
 }
 
-.sheetActions .confirm {
-  flex: 1;
+/* จัดการเมนูและตัวเลือกในหน้าร้านค้า */
+.itemBlock {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.itemBlock.soldOut {
+  opacity: 0.7;
+}
+
+.opts {
+  margin-top: 10px;
+}
+
+.opts summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--mine);
+  padding: 4px 0;
+}
+
+.optList {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.optRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.optBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.optForm {
+  display: grid;
+  grid-template-columns: 1fr 90px auto;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sheetActions button:focus-visible,
+.addBtn:focus-visible,
+.check input:focus-visible,
+.opts summary:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+/* ===== เฟส 4: หน้าแรกและการผูกบัญชีร้านค้า ===== */
+.group {
+  margin-top: 24px;
+}
+
+.groupTitle {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.groupSub {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entry {
+  display: block;
+  padding: 16px 16px 16px 20px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-left: 8px solid var(--free);
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.entryVendor {
+  border-left-color: var(--mine);
+}
+
+.entryTitle {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.entryText {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.entry:focus-visible {
+  outline: 3px solid var(--mine);
+  outline-offset: 2px;
+}
+
+.claimForm {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
 }
